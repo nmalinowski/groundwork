@@ -1,0 +1,25 @@
+{
+  "name": "groundwork",
+  "description": "Comprehensive skills library for Claude Code: planning, design, TDD, debugging, collaboration patterns, and proven techniques",
+  "version": "1.0.0",
+  "author": {
+    "name": "Groundwork Contributors"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/etr/groundwork",
+  "repository": "https://github.com/etr/groundwork",
+  "keywords": [
+    "skills",
+    "planning",
+    "design",
+    "tdd",
+    "debugging",
+    "collaboration",
+    "best-practices",
+    "workflows"
+  ],
+  "agents": "copilot/agents/",
+  "skills": "copilot/skills/",
+  "commands": "copilot/commands/",
+  "hooks": "copilot/hooks.json"
+}

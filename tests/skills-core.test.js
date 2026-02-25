@@ -12,6 +12,7 @@ const assert = require('assert');
 const {
   extractFrontmatter,
   findSkillsInDir,
+  getDefaultSkillRoots,
   stripFrontmatter
 } = require('../lib/skills-core');
 
@@ -93,6 +94,22 @@ describe('findSkillsInDir', () => {
       assert.ok(skill.skillFile, 'Each skill should have a skillFile');
       assert.strictEqual(skill.sourceType, 'plugin');
     }
+  });
+});
+
+describe('getDefaultSkillRoots', () => {
+  test('returns at least one existing skill root', () => {
+    const roots = getDefaultSkillRoots(PLUGIN_ROOT);
+    assert.ok(Array.isArray(roots));
+    assert.ok(roots.length >= 1, 'Should find at least one skill root');
+  });
+
+  test('includes repository skills directory when present', () => {
+    const roots = getDefaultSkillRoots(PLUGIN_ROOT);
+    assert.ok(
+      roots.some(r => r.endsWith(path.join('skills'))),
+      'Should include repo skills path'
+    );
   });
 });
 

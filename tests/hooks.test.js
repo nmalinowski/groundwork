@@ -11,6 +11,7 @@ const assert = require('assert');
 
 const PLUGIN_ROOT = path.resolve(__dirname, '..');
 const HOOKS_DIR = path.join(PLUGIN_ROOT, 'hooks');
+const COPILOT_HOOKS_JSON = path.join(PLUGIN_ROOT, 'copilot', 'hooks.json');
 
 // Test utilities
 let passed = 0;
@@ -91,12 +92,43 @@ describe('hooks.json', () => {
   });
 });
 
+describe('copilot hooks.json', () => {
+  test('exists and is valid JSON', () => {
+    assert.ok(fs.existsSync(COPILOT_HOOKS_JSON), 'copilot/hooks.json should exist');
+    const parsed = JSON.parse(fs.readFileSync(COPILOT_HOOKS_JSON, 'utf8'));
+    assert.strictEqual(parsed.version, 1, 'Copilot hooks config should set version 1');
+    assert.ok(parsed.hooks, 'Should have hooks object');
+  });
+
+  test('all copilot hook scripts reference existing files', () => {
+    const parsed = JSON.parse(fs.readFileSync(COPILOT_HOOKS_JSON, 'utf8'));
+    const copilotRoot = path.join(PLUGIN_ROOT, 'copilot');
+
+    for (const [event, hookConfigs] of Object.entries(parsed.hooks || {})) {
+      for (const hook of hookConfigs) {
+        for (const key of ['bash', 'powershell']) {
+          if (!hook[key]) continue;
+          const firstToken = hook[key].split(' ')[0].replace(/^["']|["']$/g, '');
+          const normalized = firstToken.replace('.\\', './').replace(/\\/g, '/');
+          if (!normalized.startsWith('./')) continue;
+          const scriptPath = path.resolve(copilotRoot, normalized.slice(2));
+          assert.ok(fs.existsSync(scriptPath), `Hook script should exist: ${scriptPath} (from ${event})`);
+        }
+      }
+    }
+  });
+});
+
 describe('session-start.sh', () => {
   test('is executable', () => {
     const scriptPath = path.join(HOOKS_DIR, 'session-start.sh');
+    // Windows filesystems typically do not expose Unix executable bits.
+    if (process.platform === 'win32') {
+      assert.ok(fs.existsSync(scriptPath), 'session-start.sh should exist');
+      return;
+    }
     const stats = fs.statSync(scriptPath);
     const isExecutable = (stats.mode & parseInt('111', 8)) !== 0;
-
     assert.ok(isExecutable, 'session-start.sh should be executable');
   });
 

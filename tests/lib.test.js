@@ -13,6 +13,7 @@ const assert = require('assert');
 const { extractFrontmatter, stripFrontmatter, hasFrontmatter } = require('../lib/frontmatter');
 const { getTempDir, readFile, writeFile } = require('../lib/utils');
 const { shouldCheck, isGitRepo } = require('../lib/check-updates');
+const { detectRuntime, getStateDir, getTempDirName, getHookEventName } = require('../lib/runtime-adapter');
 
 const PLUGIN_ROOT = path.resolve(__dirname, '..');
 
@@ -172,9 +173,9 @@ No closing`;
 // ============================================================================
 
 describe('utils.js - getTempDir', () => {
-  test('returns a path containing claude-groundwork', () => {
+  test('returns a path containing groundwork runtime suffix', () => {
     const tempDir = getTempDir();
-    assert.ok(tempDir.includes('claude-groundwork'));
+    assert.ok(tempDir.includes('groundwork'));
   });
 
   test('creates directory if it does not exist', () => {
@@ -246,6 +247,33 @@ describe('check-updates.js - shouldCheck', () => {
   test('returns boolean without force', () => {
     const result = shouldCheck(false);
     assert.strictEqual(typeof result, 'boolean');
+  });
+});
+
+// ============================================================================
+// runtime-adapter.js tests
+// ============================================================================
+
+describe('runtime-adapter.js', () => {
+  test('detectRuntime returns a supported runtime', () => {
+    const runtime = detectRuntime();
+    assert.ok(['claude', 'copilot'].includes(runtime));
+  });
+
+  test('getStateDir returns a valid state directory path', () => {
+    const dir = getStateDir('claude');
+    assert.ok(typeof dir === 'string');
+    assert.ok(dir.includes('groundwork-state'));
+  });
+
+  test('getTempDirName returns runtime-specific temp dir names', () => {
+    assert.strictEqual(getTempDirName('claude'), 'claude-groundwork');
+    assert.strictEqual(getTempDirName('copilot'), 'copilot-groundwork');
+  });
+
+  test('getHookEventName maps canonical names per runtime', () => {
+    assert.strictEqual(getHookEventName('sessionStart', 'claude'), 'SessionStart');
+    assert.strictEqual(getHookEventName('sessionStart', 'copilot'), 'sessionStart');
   });
 });
 

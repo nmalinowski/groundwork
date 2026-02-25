@@ -5,11 +5,10 @@
  */
 
 const path = require('path');
-const { execSync } = require('child_process');
 const assert = require('assert');
+const { runValidation, printValidationResults } = require('../lib/validate-plugin');
 
 const PLUGIN_ROOT = path.resolve(__dirname, '..');
-const VALIDATOR = path.join(PLUGIN_ROOT, 'lib', 'validate-plugin.js');
 
 // Test utilities
 let passed = 0;
@@ -32,33 +31,40 @@ function describe(name, fn) {
   fn();
 }
 
+function runValidator() {
+  const result = runValidation();
+  return {
+    result,
+    output: captureOutput(() => printValidationResults(result))
+  };
+}
+
+function captureOutput(fn) {
+  const logs = [];
+  const original = console.log;
+  console.log = (...args) => logs.push(args.join(' '));
+  try {
+    fn();
+  } finally {
+    console.log = original;
+  }
+  return logs.join('\n');
+}
+
 // Tests
 describe('validate-plugin.js', () => {
   test('runs without crashing', () => {
-    // Should not throw
-    execSync(`node ${VALIDATOR}`, {
-      cwd: PLUGIN_ROOT,
-      encoding: 'utf8',
-      stdio: 'pipe'
-    });
+    runValidator();
   });
 
   test('produces output', () => {
-    const output = execSync(`node ${VALIDATOR}`, {
-      cwd: PLUGIN_ROOT,
-      encoding: 'utf8',
-      stdio: 'pipe'
-    });
+    const { output } = runValidator();
 
     assert.ok(output.includes('Validating'), 'Should show validation message');
   });
 
   test('checks skills directory', () => {
-    const output = execSync(`node ${VALIDATOR}`, {
-      cwd: PLUGIN_ROOT,
-      encoding: 'utf8',
-      stdio: 'pipe'
-    });
+    const { output } = runValidator();
 
     // If there are errors, they would be in output
     // If not, "All checks passed" should appear
@@ -67,15 +73,18 @@ describe('validate-plugin.js', () => {
       'Should produce a result'
     );
   });
+
+  test('validates copilot migration assets', () => {
+    const { output } = runValidator();
+
+    assert.ok(!output.includes('Missing copilot component path'), 'Copilot component paths should be present');
+    assert.ok(!output.includes('Referenced path not found'), 'Copilot referenced paths should exist');
+  });
 });
 
 describe('skill validation rules', () => {
   test('all skills have valid frontmatter', () => {
-    const output = execSync(`node ${VALIDATOR}`, {
-      cwd: PLUGIN_ROOT,
-      encoding: 'utf8',
-      stdio: 'pipe'
-    });
+    const { output } = runValidator();
 
     // Check no "Missing or invalid YAML frontmatter" errors
     assert.ok(
@@ -85,11 +94,7 @@ describe('skill validation rules', () => {
   });
 
   test('all skills have name field', () => {
-    const output = execSync(`node ${VALIDATOR}`, {
-      cwd: PLUGIN_ROOT,
-      encoding: 'utf8',
-      stdio: 'pipe'
-    });
+    const { output } = runValidator();
 
     assert.ok(
       !output.includes('Missing required field: name'),
@@ -98,11 +103,7 @@ describe('skill validation rules', () => {
   });
 
   test('all skills have description field', () => {
-    const output = execSync(`node ${VALIDATOR}`, {
-      cwd: PLUGIN_ROOT,
-      encoding: 'utf8',
-      stdio: 'pipe'
-    });
+    const { output } = runValidator();
 
     assert.ok(
       !output.includes('Missing required field: description'),

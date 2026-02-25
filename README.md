@@ -1,8 +1,30 @@
 # Groundwork
 
-A comprehensive skills library for Claude Code, consolidating proven techniques for planning, design, TDD, debugging, collaboration, and problem-solving.
+A comprehensive skills and workflow library for Claude Code and GitHub Copilot CLI, consolidating proven techniques for planning, design, TDD, debugging, collaboration, and problem-solving.
 
 ## Installation
+
+### GitHub Copilot CLI (Plugin)
+
+Groundwork now ships a Copilot-compatible plugin manifest at `plugin.json` with generated assets under `copilot/`.
+
+Install from a local checkout:
+
+```bash
+copilot plugin install .
+```
+
+Or install from GitHub:
+
+```bash
+copilot plugin install https://github.com/etr/groundwork
+```
+
+To regenerate Copilot assets after editing source agents/skills/commands/hooks:
+
+```bash
+node tools/generate-copilot-assets.js
+```
 
 ### Via Marketplace
 
@@ -93,7 +115,7 @@ Analyze existing code to generate initial specifications:
 
 ## Commands
 
-Commands are what you type to interact with Groundwork. All commands are prefixed with `groundwork:` (e.g., `/groundwork:design-product`), though the prefix can be omitted if no other plugin uses the same command name.
+Commands are what you type to interact with Groundwork. In Claude, commands are prefixed with `groundwork:` (e.g., `/groundwork:design-product`), though the prefix can be omitted if no other plugin uses the same command name. Copilot plugin command wrappers are generated in `copilot/commands/`.
 
 ### Planning Commands
 
@@ -307,14 +329,14 @@ These run after task list creation via the `task-validation-loop` skill:
 
 ### Hooks
 
-Hooks are event-driven automations that fire at specific points in the Claude Code lifecycle:
+Hooks are event-driven automations that fire at specific points in the Claude Code and Copilot CLI lifecycles:
 
 | Hook | Event | Description |
 |------|-------|-------------|
-| Session Start | `SessionStart` | Detects project state, loads skill context, checks for updates (1x/day) |
-| Pre-Compact | `PreCompact` | Preserves critical skill state before context compaction |
-| Commit Alignment | `PostToolUse` (on `git commit`) | Verifies commits align with specs and task definitions |
-| Agent Output | `SubagentStop` | Validates agent output format |
+| Session Start | `SessionStart` / `sessionStart` | Detects project state, loads skill context, checks for updates (1x/day) |
+| Session End/Pre-Compact | `PreCompact` / `sessionEnd` | Preserves critical skill state before context compaction/session close |
+| Commit Alignment | `PostToolUse` / `postToolUse` (on `git commit`) | Verifies commits align with specs and task definitions |
+| Agent Output | `SubagentStop` / `postToolUse` (delegate/task tools) | Validates agent output format |
 
 ## Configuration
 
