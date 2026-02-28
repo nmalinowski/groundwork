@@ -27,6 +27,7 @@ Document and move on.
   - `specs/product_specs.md` (PRD with personas, vision, NFRs)
   - `specs/architecture.md` (technical constraints, API patterns)
 - **Output:** `specs/design_system.md`
+- **Transient:** `specs/design-comparison.html` (color/font comparison, deleted after identity is chosen)
 
 ## Prerequisites
 
@@ -96,61 +97,111 @@ Present as a cohesive system. Only adjust if user has concerns.
 
 ## Phase 2: Brand Identity
 
-### Step 4: Color Recommendation
+### Step 4: Propose Identity Options
 
-Propose based on context (not menu options).
+Propose 2-4 complete visual identity options, each pairing a color palette with a font choice that suits its personality. Draw from the product context, personas, and design principles.
 
-> "For a [product type] targeting [persona], I recommend:
+> "Based on [context], here are identity options to compare:
 >
-> **Primary: Deep Blue (#1E40AF)**
-> Conveys trust and professionalism. Meets WCAG AA contrast.
+> **Option A: [Name] — [Personality tag]**
+> Colors: Primary [hex], Secondary [hex], Accent [hex]
+> Fonts: [Heading font] / [Body font]
+> Personality: [1-sentence description]
 >
-> **Secondary: Warm Gray (#78716C)**
-> Softens the blue, adds approachability without being casual.
+> **Option B: [Name] — [Personality tag]**
+> Colors: Primary [hex], Secondary [hex], Accent [hex]
+> Fonts: [Heading font] / [Body font]
+> Personality: [1-sentence description]
 >
-> **Accent: Amber (#F59E0B)**
-> For CTAs and highlights - draws attention without competing.
+> **Option C: [Name] — [Personality tag]** *(if warranted)*
+> ...
 >
-> This palette aligns with [DP-001: Clarity First].
-> Does this direction work, or should I adjust toward [warmer/cooler/bolder]?"
+> I'll generate a visual comparison so you can see these side-by-side in your browser."
 
 **Handle Feedback:**
-- "I want it more [X]" -> Adjust and show revised
-- "I have specific colors" -> Incorporate them, ensure contrast/harmony
-- "Looks good" -> Document as BRD-001/002/003
+- User has specific colors/fonts → Incorporate as an additional candidate
+- User eliminates options → Note preferences, carry forward survivors
+- User wants different direction → Propose new candidates
 
-**Semantic Colors (standard, propose without asking):**
+Aim for 2-4 candidates total (avoids decision fatigue). Include user-provided colors/fonts as a candidate if offered.
+
+### Step 5: Generate Visual Comparison
+
+Generate `specs/design-comparison.html` — a self-contained file that renders identical UI components under each candidate identity option, side-by-side, with a decision helper table.
+
+**Architecture — data-driven, single render function:**
+
+1. **CSS custom properties per scheme** — each scheme defines color variables (`--bg-primary`, `--bg-secondary`, `--bg-elevated`, `--text-primary`, `--text-secondary`, `--accent`, `--accent-hover`, `--accent-fg`, `--glass`, `--glass-border`, `--success`, `--success-muted`, `--focus-ring`) AND font overrides (`--font-heading`, `--font-body`).
+
+2. **JavaScript scheme array** — each entry contains:
+   - `id`, `name`, `subtitle` (short description)
+   - `bgHex`, `accentHex`, `textHex` (for contrast computation)
+   - `vars` object mapping CSS custom properties to values
+   - `fonts` object with `heading` and `body` font-family strings
+   - `mood` array of personality tags
+   - `audience`, `personality` descriptions
+
+3. **Single `renderColumn(scheme)` function** — generates identical components per scheme:
+   - Navigation bar with logo mark, nav links, avatar
+   - Button row (primary, outline, ghost)
+   - Glass card with heading, body text, badge
+   - Form input with label and placeholder
+   - Badge row (default, success, outline)
+   - Progress bar with label
+   - Content card with image placeholder, title, actions
+
+4. **Decision helper table** at the bottom with computed rows:
+   - Base colors (swatches + hex codes)
+   - Text-on-background WCAG contrast ratio (computed, with AA pass/fail badge)
+   - Accent-on-background WCAG contrast ratio (computed, with AA pass/fail badge)
+   - Mood tags
+   - Audience fit
+   - Font pairing (heading + body font names)
+
+5. **Self-contained** — no external dependencies except Google Fonts `<link>` tags for candidate fonts. All CSS and JS inline.
+
+6. **Responsive grid** — columns per scheme count (`cols-2`, `cols-3`, `cols-4`) with responsive breakpoints.
+
+**Font loading:** Add a single `<link>` to Google Fonts loading all candidate heading and body fonts. Apply per-scheme via `--font-heading` / `--font-body` CSS custom properties and a `.has-custom-fonts` class on each scheme column.
+
+**WCAG contrast computation:** Include `hexToRgb()`, `srgbToLinear()`, `luminance()`, and `contrastRatio()` functions inline. Display results as `N.N:1 AA Pass` (green) or `N.N:1 AA Fail` (red).
+
+**After generating:**
+
+> "I've generated the visual comparison at `specs/design-comparison.html`. Open it in your browser to see the identity options side-by-side."
+
+**Handle evaluation feedback:**
+- User picks a winner → Document as BRD decisions, define semantic colors and type scale, proceed to Step 6
+- User wants tweaks → Regenerate with adjustments
+- User likes colors from one option + fonts from another → Regenerate a mixed comparison
+- User can't decide → Generate a focused 2-scheme comparison
+
+**After identity is chosen, define the full palette and type scale:**
+
+Semantic colors (propose based on chosen palette temperature):
 
 | Semantic | Color | Usage |
 |----------|-------|-------|
-| Success | Green #22C55E | Confirmations, completed states |
-| Warning | Amber #F59E0B | Cautions, pending actions |
-| Error | Red #EF4444 | Errors, destructive actions |
-| Info | Blue #3B82F6 | Informational messages |
+| Success | Green | Confirmations, completed states |
+| Warning | Amber | Cautions, pending actions |
+| Error | Red | Errors, destructive actions |
+| Info | Blue | Informational messages |
 
-**Neutral Palette:**
-Define gray scale for text, backgrounds, borders. Propose based on primary color temperature.
+Neutral palette: Define gray scale for text, backgrounds, borders based on chosen primary color temperature.
 
-### Step 5: Typography Recommendation
+Type scale based on chosen body font:
 
-> "For [product personality], I recommend:
->
-> **Font: Inter** - Modern, highly readable, professional but not stuffy.
-> **Scale: 16px base** - Clear hierarchy without overwhelming.
->
-> | Token | Size | Usage |
-> |-------|------|-------|
-> | `--text-xs` | 12px | Captions, labels |
-> | `--text-sm` | 14px | Secondary text |
-> | `--text-base` | 16px | Body text |
-> | `--text-lg` | 18px | Lead paragraphs |
-> | `--text-xl` | 20px | Section headers |
-> | `--text-2xl` | 24px | Page headers |
-> | `--text-3xl` | 30px | Hero text |
->
-> Want something more [distinctive/formal/playful] instead?"
+| Token | Size | Usage |
+|-------|------|-------|
+| `--text-xs` | 12px | Captions, labels |
+| `--text-sm` | 14px | Secondary text |
+| `--text-base` | 16px | Body text |
+| `--text-lg` | 18px | Lead paragraphs |
+| `--text-xl` | 20px | Section headers |
+| `--text-2xl` | 24px | Page headers |
+| `--text-3xl` | 30px | Hero text |
 
-Only dig deeper if user has concerns.
+Delete `specs/design-comparison.html` after the palette and typography are documented.
 
 ### Step 6: Brand Voice
 
@@ -230,7 +281,7 @@ Present summary for review, then write the file.
 
 ## Step 9: Suggest Next Step
 
-After successfully updating the architecture document, ask what should be the next workflow step:
+After successfully writing the design system document, ask what should be the next workflow step:
 
 ```json
 {
