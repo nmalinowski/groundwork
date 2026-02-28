@@ -21,6 +21,22 @@ When user doesn't have a preference:
 
 Document and move on.
 
+## Design Philosophy
+
+Every design system should have a **distinctive identity**, not just be functional. The goal is a system that someone could recognize — "that's [product name]" — from its visual identity alone.
+
+**Anti-generic principle:** Never default to the most common choices just because they're safe. If you find yourself reaching for Inter + enterprise blue + clean minimal, stop and ask why. Those choices should require justification, not be the path of least resistance.
+
+**Tonal direction:** Every design system should commit to a recognizable aesthetic posture — not a vague descriptor like "professional" or "modern" (which describe everything and nothing), but a specific tonal direction:
+
+- Brutally minimal, maximalist, retro-futuristic, organic warmth, quiet luxury, playful, editorial, brutalist, art deco, soft atmospheric, industrial, geometric bold
+
+The tonal direction is derived from the product's persona, vision, and competitive context. It guides every downstream decision — color strategy, typography personality, spatial character, motion style.
+
+**Memorability test:** After defining the identity, ask: "Would a user recognize this product from its visual identity alone?" If swapping the logo onto a competitor's site would go unnoticed, the identity isn't distinctive enough.
+
+**Distinctiveness and accessibility are not in tension.** Bold color choices can meet WCAG AA. Characterful typography can be highly readable. Atmospheric surfaces can have clear contrast. Never trade accessibility for aesthetics — find the intersection.
+
 ## File Locations
 
 - **Input:**
@@ -59,7 +75,9 @@ Move on quickly after gathering constraints.
 
 ### Step 2: Propose Design Principles
 
-Based on context, propose principles and explain why.
+Based on context, propose principles and explain why. One principle should address **visual identity and aesthetic commitment** — not as decoration, but as a functional design value.
+
+Also derive a **tonal direction** from the PRD's persona and vision. Avoid vague non-directions like "professional", "modern", or "clean" — these describe nearly every product and guide no decisions. Instead, commit to a specific aesthetic posture (see the tonal direction list in Design Philosophy above).
 
 > "Based on [specific context from PRD], I recommend these guiding principles:
 >
@@ -69,8 +87,11 @@ Based on context, propose principles and explain why.
 > **DP-002: [Principle Name]**
 > Because [specific reason tied to their context].
 >
-> **DP-003: [Principle Name]**
-> This supports [their stated goal/constraint].
+> **DP-003: Distinctive Identity**
+> [Product] should be visually recognizable — its personality should come through in every screen, not just the marketing site. This means committing to [tonal direction] as our aesthetic posture.
+>
+> **Tonal Direction: [specific direction]**
+> Derived from [persona characteristic] and [product vision element]. This will guide our color strategy, typography choices, spatial feel, and motion character.
 >
 > Does this direction feel right? I can adjust if something's off."
 
@@ -99,18 +120,34 @@ Present as a cohesive system. Only adjust if user has concerns.
 
 ### Step 4: Propose Identity Options
 
-Propose 2-4 complete visual identity options, each pairing a color palette with a font choice that suits its personality. Draw from the product context, personas, and design principles.
+Before proposing options, confirm the **tonal direction** established in Step 2. Each option should be a genuine exploration of that direction (or a deliberate contrast if offering range), not a convergence on "clean professional minimal."
 
-> "Based on [context], here are identity options to compare:
+Propose 2-4 complete visual identity options, each pairing a color strategy with typography that suits its personality. Draw from the product context, personas, and design principles.
+
+**Anti-pattern warnings:**
+- Do not propose options where all use the same font family
+- Do not copy palettes from famous brands (see "Colors to Avoid as Primary" in color reference)
+- Do not let all options converge on the same personality — if they all feel "clean and minimal," the exercise failed
+- At least one option should use a characterful or unexpected font pairing
+
+> "Based on [context] and our **[tonal direction]** direction, here are identity options to compare:
 >
 > **Option A: [Name] — [Personality tag]**
+> **Tonal Direction:** [specific direction this option embodies]
 > Colors: Primary [hex], Secondary [hex], Accent [hex]
+> Color Strategy: [e.g., Dominant + Sharp Accent, Monochrome + One]
 > Fonts: [Heading font] / [Body font]
+> **Visual Atmosphere:** [texture/surface concept — e.g., "subtle grain texture on surfaces, sharp card shadows"]
+> **Spatial Character:** [layout personality — e.g., "generous whitespace, asymmetric hero layouts"]
 > Personality: [1-sentence description]
 >
 > **Option B: [Name] — [Personality tag]**
+> **Tonal Direction:** [specific direction]
 > Colors: Primary [hex], Secondary [hex], Accent [hex]
+> Color Strategy: [approach]
 > Fonts: [Heading font] / [Body font]
+> **Visual Atmosphere:** [different texture/surface concept]
+> **Spatial Character:** [different layout personality]
 > Personality: [1-sentence description]
 >
 > **Option C: [Name] — [Personality tag]** *(if warranted)*
@@ -140,6 +177,8 @@ Generate `specs/design-comparison.html` — a self-contained file that renders i
    - `fonts` object with `heading` and `body` font-family strings
    - `mood` array of personality tags
    - `audience`, `personality` descriptions
+   - `atmosphere` — a brief description of the visual texture/surface feel (e.g., "subtle grain texture, sharp shadows")
+   - `spatialCharacter` — the layout personality (e.g., "generous whitespace, centered compositions")
 
 3. **Single `renderColumn(scheme)` function** — generates identical components per scheme:
    - Navigation bar with logo mark, nav links, avatar
@@ -149,6 +188,7 @@ Generate `specs/design-comparison.html` — a self-contained file that renders i
    - Badge row (default, success, outline)
    - Progress bar with label
    - Content card with image placeholder, title, actions
+   - Apply a subtle background texture or overlay per scheme (e.g., noise, gradient wash, grain) based on `scheme.atmosphere` to give each column a different *feel*, not just different colors
 
 4. **Decision helper table** at the bottom with computed rows:
    - Base colors (swatches + hex codes)
@@ -157,6 +197,8 @@ Generate `specs/design-comparison.html` — a self-contained file that renders i
    - Mood tags
    - Audience fit
    - Font pairing (heading + body font names)
+   - Atmosphere (visual texture/surface description)
+   - Spatial character (layout personality)
 
 5. **Self-contained** — no external dependencies except Google Fonts `<link>` tags for candidate fonts. All CSS and JS inline.
 
@@ -224,31 +266,45 @@ Delete `specs/design-comparison.html` after the palette and typography are docum
 
 Derive from architecture + PRD (minimal questions needed).
 
-> "Based on your architecture and product needs, here's the UX pattern system:
+> "Based on your architecture, product needs, and our **[tonal direction]** direction, here's the UX pattern system:
 >
-> **Navigation: Sidebar with collapsible sections**
-> You have [N] top-level features. Sidebar keeps everything accessible.
+> **Navigation: [Pattern] — [why]**
+> [Specific recommendation tied to feature count and product type.]
 >
-> **Loading: Skeleton screens + optimistic updates**
-> Your API is fast. Skeletons for initial loads, optimistic for writes.
+> **Loading: [Pattern] — [why]**
+> [Specific recommendation tied to API characteristics.]
 >
 > **Errors: Layered approach**
 > - Inline for field validation
 > - Toast for operation failures
 > - Banner for system issues
 >
-> **Empty States: Illustrated with clear CTA**
-> First-run guides users; no-data encourages action.
+> **Empty States: [Pattern] — [why]**
+> [Specific recommendation tied to first-run experience needs.]
 >
-> **Forms: Validate on blur**
-> Catches issues early without being intrusive.
+> **Forms: [Pattern] — [why]**
+> [Specific recommendation tied to user expertise level.]
 >
-> **Responsive: Mobile-first breakpoints**
-> Standard Tailwind scale (sm/md/lg/xl).
+> **Responsive: [Pattern] — [why]**
+> [Specific recommendation tied to primary device context.]
 >
-> **Motion: Purposeful and quick**
-> - Micro-interactions: 100-200ms
-> - Transitions: 200-300ms
+> **Visual Atmosphere:**
+> - **Background textures:** [e.g., subtle noise on surfaces, gradient washes on hero sections, solid flat for data areas]
+> - **Card treatments:** [e.g., glass morphism with blur, sharp drop shadows, flat with border, soft elevation]
+> - **Section dividers:** [e.g., hairline rules, gradient fades, whitespace only, decorative accent lines]
+> - **Image treatments:** [e.g., rounded corners with shadow, duotone filter, masked into shapes, full-bleed]
+>
+> **Spatial Composition:**
+> - **Alignment style:** [e.g., strict 12-column grid, organic offset, centered single-column, asymmetric split]
+> - **Density:** [e.g., generous whitespace letting content breathe, compact utilitarian, varied rhythm by section type]
+> - **Hero treatments:** [e.g., full-bleed imagery, typographic-only, split layout with illustration, contained card]
+> - **Content rhythm:** [e.g., regular cadence with consistent section heights, varied sizes creating visual interest, alternating layouts]
+>
+> **Motion & Interaction Character:**
+> - **Entrance patterns:** [e.g., fade-up with stagger, instant cut, slide from direction of origin]
+> - **Hover signatures:** [e.g., subtle lift + shadow deepen on cards, color shift on buttons, underline slide on links]
+> - **Scroll behavior:** [e.g., sticky section headers, gentle parallax on hero, reveal-on-scroll for content sections]
+> - **Timing:** Micro-interactions 100-200ms, transitions 200-300ms
 > - Respect `prefers-reduced-motion`
 >
 > This is a cohesive system. Any patterns you want me to reconsider?"
@@ -275,7 +331,9 @@ Present summary for review, then write the file.
 >
 > **Foundations:** [N] design principles, WCAG [level], token system
 > **Brand:** [Primary color], [Font], [Voice tone]
-> **UX Patterns:** [Nav type], [Loading strategy], [Error approach]
+> **Tonal Direction:** [specific direction — e.g., warm editorial, brutally minimal]
+> **Visual Atmosphere:** [surface/texture summary — e.g., subtle grain textures, glass cards, generous whitespace]
+> **UX Patterns:** [Nav type], [Loading strategy], [Error approach], [Motion character]
 >
 > Ready to document this in `specs/design_system.md`?"
 
@@ -336,6 +394,6 @@ Each decision follows a lightweight format:
 ## Reference Files
 
 - `references/design-system-template.md` - Template for design system document
-- `references/color-examples.md` - Example color palettes by industry
+- `references/color-examples.md` - Color strategy approaches and reference palettes
 - `references/typography-examples.md` - Example type systems
 - `references/pattern-examples.md` - Example UX patterns

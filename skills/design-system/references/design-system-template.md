@@ -103,6 +103,29 @@ Use this template when creating `specs/design_system.md`.
 
 [Tone and writing principles]
 
+### 2.5 Visual Atmosphere
+
+**Tonal Direction:** [e.g., brutally minimal, warm editorial, retro-futuristic, organic warmth, quiet luxury, playful, editorial, brutalist, art deco, soft atmospheric, industrial, geometric bold]
+
+**Surface Treatments:**
+| Surface | Treatment | Notes |
+|---------|-----------|-------|
+| Backgrounds | [e.g., subtle noise texture, gradient wash, solid flat] | [usage context] |
+| Cards | [e.g., glass morphism, sharp shadow, flat border, soft elevation] | [hover behavior] |
+| Section dividers | [e.g., hairline, gradient fade, whitespace only, decorative rule] | [rhythm role] |
+| Image treatments | [e.g., rounded corners, duotone filter, masked shapes, full-bleed] | [brand expression] |
+
+**Spatial Character:**
+| Property | Approach | Notes |
+|----------|----------|-------|
+| Alignment | [e.g., strict grid, organic offset, centered, asymmetric] | [overall rhythm] |
+| Density | [e.g., generous whitespace, compact utilitarian, varied rhythm] | [content type influence] |
+| Hero treatment | [e.g., full-bleed, contained card, split layout, typographic-only] | [landing/key pages] |
+| Content rhythm | [e.g., regular cadence, varied section sizes, alternating layouts] | [scroll experience] |
+
+**Signature Details:**
+[Distinctive micro-decisions that make this design recognizable — e.g., specific border radius for all elements, a recurring accent line, a particular way images are cropped, a color treatment on hover states]
+
 ---
 
 ## 3) UX Patterns
@@ -133,9 +156,41 @@ Use this template when creating `specs/design_system.md`.
 
 [Breakpoints and adaptation]
 
-### 3.7 Motion Principles
+### 3.7 Motion & Interaction Character
 
+**Timing Tokens:**
 [Animation timing and usage]
+
+**Entrance Patterns:**
+| Element | Entrance | Duration | Notes |
+|---------|----------|----------|-------|
+| Page content | [e.g., fade-up, slide-in, cut] | [ms] | [stagger behavior] |
+| Cards/lists | [e.g., staggered fade, cascade, instant] | [ms] | [delay pattern] |
+| Modals/dialogs | [e.g., scale-fade, slide-up, instant] | [ms] | [backdrop behavior] |
+
+**Hover Signatures:**
+| Element | Hover Effect | Notes |
+|---------|-------------|-------|
+| Buttons | [e.g., subtle lift + shadow, color shift, underline reveal] | [brand personality] |
+| Cards | [e.g., border glow, subtle scale, shadow deepen, accent reveal] | [interaction invitation] |
+| Links | [e.g., underline slide, color transition, background highlight] | [discoverability] |
+
+**Scroll Behavior:**
+| Pattern | Usage | Notes |
+|---------|-------|-------|
+| [e.g., parallax, sticky headers, reveal-on-scroll, none] | [where applied] | [reduced-motion fallback] |
+
+### 3.8 Visual Atmosphere
+
+**Background treatments, card surfaces, section dividers, and image styles that create the product's visual feel.**
+
+[Reference §2.5 for defined treatments. This section documents how those treatments are applied across UX patterns.]
+
+### 3.9 Spatial Composition
+
+**Alignment style, density, hero treatments, and content rhythm that define the product's layout personality.**
+
+[Reference §2.5 for defined spatial character. This section documents how spatial decisions apply across page types and breakpoints.]
 
 ---
 

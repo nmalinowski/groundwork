@@ -1,43 +1,89 @@
 # Typography Examples
 
-Reference type systems for different product types and use cases.
+Reference type systems organized by personality and pairing strategy — not by industry defaults.
 
 ## Font Pairing Strategies
 
-### 1. Single Family (Recommended for UI)
+### 1. Single Family (Characterful)
 
-Use one versatile font family with multiple weights.
+Use one versatile font family with multiple weights. Choose one with personality — not the most common option on the internet.
 
 **Pros:** Consistent feel, simpler loading, fewer decisions
 **Cons:** Less visual variety
 
-**Examples:**
-- **Inter** - Modern geometric sans, excellent screen readability
-- **IBM Plex Sans** - Humanist sans with technical clarity
-- **Source Sans Pro** - Adobe's first open source, highly readable
+**Warning:** Avoid defaulting to Inter, Roboto, or Open Sans. These are fine fonts but they are everywhere — choosing them signals "we didn't think about typography." If the product genuinely needs maximum neutrality, choose it deliberately and document why.
+
+**Characterful alternatives by personality:**
+
+| Font | Personality | Best For |
+|------|-------------|----------|
+| **Space Grotesk** | Technical, geometric, slightly quirky | Dev tools, data products |
+| **Plus Jakarta Sans** | Warm geometric, friendly precision | SaaS, productivity |
+| **DM Sans** | Clean optical sizing, subtly distinctive | Dashboards, content apps |
+| **Outfit** | Modern humanist, open and confident | Consumer, brand-forward |
+| **Nunito Sans** | Rounded, approachable, soft | Health, community, education |
+| **Albert Sans** | Geometric with personality, slightly wide | Marketing, creative tools |
+| **General Sans** | Contemporary, balanced, editorial | Magazines, portfolios |
+| **Satoshi** | Modern geometric, slight retro feel | Design tools, creative apps |
+| **Sora** | Futuristic, geometric, clean | Tech, innovation-forward |
+| **Figtree** | Friendly geometric, open counters | Apps, consumer products |
 
 ### 2. Sans + Serif Pair
 
-Sans for UI, serif for content/headings.
+Sans for UI, serif for content/headings — or vice versa for editorial products.
 
-**Pros:** Visual hierarchy, editorial feel
-**Cons:** More complex, potential clashes
+**Pros:** Visual hierarchy, editorial feel, strong contrast
+**Cons:** More complex, potential clashes if personalities conflict
 
-**Examples:**
-- **Poppins + Merriweather** - Modern + traditional
-- **Work Sans + Lora** - Clean + elegant
-- **Rubik + Roboto Slab** - Rounded + sturdy
+**Distinctive pairings:**
+
+| Heading | Body | Character |
+|---------|------|-----------|
+| **Fraunces** | Outfit | Warm, old-style meets modern — editorial warmth |
+| **Syne** | Inter Tight | Experimental, geometric tension — creative/art |
+| **Bitter** | Karla | Sturdy slab + open sans — trustworthy yet friendly |
+| **Crimson Pro** | Plus Jakarta Sans | Classical elegance + modern clarity — premium |
+| **Newsreader** | DM Sans | Editorial authority + clean UI — content-first |
+| **Libre Caslon Text** | Space Grotesk | Traditional + technical — finance, legal with edge |
+| **Cormorant Garamond** | Nunito Sans | High contrast elegance + softness — luxury/wellness |
 
 ### 3. Display + Body
 
-Distinctive display font for headings, neutral body font.
+Distinctive display font for headings, neutral-but-interesting body font.
 
-**Pros:** Strong brand identity, visual interest
+**Pros:** Strong brand identity, visual impact, memorable
 **Cons:** Display fonts can fatigue, limit flexibility
 
-**Examples:**
-- **Playfair Display + Open Sans** - Elegant + readable
-- **Montserrat + Roboto** - Geometric + neutral
+**Bold pairings:**
+
+| Display | Body | Character |
+|---------|------|-----------|
+| **Bebas Neue** | DM Sans | Tall condensed + clean — bold, editorial |
+| **Unbounded** | Work Sans | Rounded display + neutral — playful tech |
+| **Syne** | General Sans | Experimental + contemporary — creative studios |
+| **Archivo Black** | Figtree | Heavy industrial + friendly — strong voice |
+| **Dela Gothic One** | Nunito Sans | Thick, characterful + soft — playful contrast |
+| **Space Mono** | Space Grotesk | Monospace display + geometric — dev/retro |
+| **Instrument Serif** | Instrument Sans | Matched pair, elegant — editorial, luxury |
+
+## Tonal Direction Recommendations
+
+Map aesthetic direction to font strategy instead of industry to safe defaults.
+
+| Tonal Direction | Strategy | Recommended Starting Points |
+|-----------------|----------|----------------------------|
+| **Brutally minimal** | Single family, tight tracking, heavy weight contrasts | Space Grotesk, Archivo, Instrument Sans |
+| **Warm editorial** | Serif headings + humanist body | Fraunces + Outfit, Newsreader + DM Sans |
+| **Retro-futuristic** | Mono or geometric display + geometric body | Space Mono + Space Grotesk, Syne + Inter Tight |
+| **Organic warmth** | Rounded sans or soft serif | Nunito Sans, Figtree, Cormorant Garamond + Nunito Sans |
+| **Quiet luxury** | High-contrast serif + refined sans | Cormorant Garamond + Plus Jakarta Sans, Instrument Serif + Instrument Sans |
+| **Playful** | Rounded display + open body | Unbounded + Work Sans, Dela Gothic One + Nunito Sans |
+| **Editorial** | Distinctive serif + clean sans | Crimson Pro + Plus Jakarta Sans, Libre Caslon Text + General Sans |
+| **Brutalist** | Mono or condensed, raw weights | Bebas Neue + DM Sans, Space Mono + Sora |
+| **Art deco** | Geometric display, elegant body | Poiret One + Raleway, Josefin Sans + Outfit |
+| **Industrial** | Heavy, wide, utilitarian | Archivo Black + Figtree, Bebas Neue + Space Grotesk |
+| **Geometric bold** | Strong geometric with character | Sora + DM Sans, Albert Sans + Space Grotesk |
+| **Soft atmospheric** | Light weights, generous spacing | Outfit (300-400), Plus Jakarta Sans (300-400) |
 
 ## Type Scales
 
@@ -147,9 +193,9 @@ For editorial or marketing-heavy products:
 ```css
 /* Optimal: font-display swap */
 @font-face {
-  font-family: 'Inter';
+  font-family: 'Space Grotesk';
   font-display: swap; /* Show fallback immediately, swap when loaded */
-  src: url('/fonts/inter.woff2') format('woff2');
+  src: url('/fonts/space-grotesk.woff2') format('woff2');
 }
 ```
 
@@ -161,33 +207,10 @@ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
              "Helvetica Neue", Arial, sans-serif;
 
 /* With custom font */
-font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI",
              Roboto, sans-serif;
 
 /* Monospace */
 font-family: "JetBrains Mono", "Fira Code", ui-monospace,
              SFMono-Regular, Menlo, Monaco, monospace;
 ```
-
-## Industry-Specific Recommendations
-
-### B2B SaaS
-- **Inter** or **IBM Plex Sans** - Professional, highly readable
-- Medium weight for UI, semibold for headers
-
-### Developer Tools
-- **JetBrains Mono** or **Fira Code** for code
-- **Inter** or **Source Sans** for UI
-- Consider ligatures for code
-
-### Consumer Apps
-- **Poppins** or **Nunito** - Friendly, approachable
-- **Rubik** - Modern, rounded corners
-
-### Finance/Legal
-- **IBM Plex Sans** or **Source Sans** - Trustworthy, clear
-- Avoid quirky fonts; prioritize readability
-
-### Creative/Marketing
-- More freedom for distinctive display fonts
-- Ensure body text remains highly readable

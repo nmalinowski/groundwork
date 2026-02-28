@@ -75,13 +75,14 @@ Review the current session for:
 | Color token | New color value, palette adjustment | §2.1 Color System |
 | Typography | Font family, size, weight decisions | §2.2 Typography |
 | Brand voice | UI copy patterns, tone decisions | §2.4 Brand Voice |
+| Visual atmosphere | Surface treatments, textures, spatial character, tonal direction | §2.5 Visual Atmosphere |
 | Navigation | Nav structure, menu patterns | §3.1 Navigation |
 | Loading states | Skeleton, spinner, progress patterns | §3.2 Loading States |
 | Error handling | Error display, validation feedback | §3.3 Error Handling |
 | Empty states | No-data, first-run experiences | §3.4 Empty States |
 | Form patterns | Input validation, form layout | §3.5 Form Patterns |
 | Responsive | Breakpoint decisions, mobile adaptations | §3.6 Responsive Behavior |
-| Motion | Animation timing, transitions | §3.7 Motion Principles |
+| Motion | Animation timing, transitions, entrance patterns, hover signatures | §3.7 Motion & Interaction Character |
 | Component | New component styling guidelines | §4 Component Guidelines |
 
 ## Step 3: Propose Updates
