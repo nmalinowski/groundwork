@@ -26,18 +26,79 @@ claude plugin marketplace update groundwork-marketplace
 claude plugin update groundwork
 ```
 
-### Direct Installation
-
-```bash
-claude plugin install https://github.com/etr/groundwork
-```
-
 ### Manual Installation
 
 ```bash
 cd ~/.claude/plugins
 git clone https://github.com/etr/groundwork.git
 ```
+
+Or use the installer provided with the codebase.
+
+### Other Platforms (Experimental)
+
+> **Warning:** Installation on platforms other than Claude Code is experimental. Skills and agents are automatically transformed to work without Claude Code's plugin system, but some features (hooks, slash commands, skill chaining) may not work identically. Use at your own risk.
+
+Groundwork skills and agents can be installed into other AI coding tools using the included installer script. The installer transforms skill content to remove Claude Code-specific constructs and adapts the format for each target.
+
+#### Supported Targets
+
+| Target | Flag | Description |
+|--------|------|-------------|
+| [Codex CLI](https://github.com/openai/codex) | `--codex` | Agents are installed as skills with a `review-` prefix |
+| [OpenCode](https://github.com/opencode-ai/opencode) | `--opencode` | Agents are installed as standalone agent files |
+| [Kiro](https://kiro.dev) | `--kiro` | Agents use JSON config + prompt file pairs |
+
+#### Installation
+
+Clone the repository and run the installer:
+
+```bash
+git clone https://github.com/etr/groundwork.git
+cd groundwork
+```
+
+Install globally (available in all projects):
+
+```bash
+./install-skills.sh --codex --global
+```
+
+Install for the current project only:
+
+```bash
+./install-skills.sh --opencode --project
+```
+
+You can install to multiple targets at once:
+
+```bash
+./install-skills.sh --codex --opencode --kiro --global
+```
+
+#### Installer Options
+
+| Option | Description |
+|--------|-------------|
+| `--global` | Install to user-level config directory |
+| `--project` | Install to current project directory |
+| `--force` | Overwrite existing files |
+| `--dry-run` | Preview actions without making changes |
+| `--skills-only` | Install only skills (skip agents) |
+| `--source DIR` | Groundwork source directory (default: auto-detect) |
+
+#### What Gets Installed
+
+- **Skills** — Workflow definitions (planning, TDD, debugging, etc.) are installed with a `groundwork-` prefix. On OpenCode, skill dependencies are automatically inlined as appendix sections.
+- **Agents** — Verification and review agents (code quality, security, architecture alignment, etc.) are installed in each target's native agent format.
+- **Hooks** — Not installed automatically. Event-driven automations (session start, pre-compact, commit alignment) require manual setup for each tool.
+- **Commands** — Not applicable. Other tools discover skills directly by name rather than through slash commands.
+
+#### Limitations
+
+- Hooks (`SessionStart`, `PreCompact`, `PostToolUse`) are not portable and must be configured manually for each tool
+- On OpenCode, complex multi-skill workflows may lose interactivity since skill dependencies are inlined as static appendix sections rather than invoked at runtime
+- Update checking is not available outside Claude Code
 
 ### Verify Installation
 

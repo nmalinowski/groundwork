@@ -1,0 +1,36 @@
+# install-config.txt
+# Format: skill-name = installed-name [command]
+#   skill-name:     directory name under skills/
+#   installed-name: name used in target tools (or "drop" to exclude)
+#   command:        optional flag — if present, also install a thin command/prompt entry point
+# Lines starting with # are comments
+
+# Skills with command entry points
+build-unplanned-feature = groundwork-build-unplanned command
+check-alignment = groundwork-check-specs-alignment command
+tasks = groundwork-create-tasks command
+debugging = groundwork-debug command
+architecture = groundwork-design-architecture command
+product-design = groundwork-design-product command
+sync-architecture = groundwork-source-architecture-from-code command
+sync-specs = groundwork-source-product-specs-from-code command
+sync-design-system = groundwork-source-ux-design-from-code command
+design-system = groundwork-ux-design command
+validation-loop = groundwork-validate command
+next-task = groundwork-work-on-next-task command
+execute-task = groundwork-work-on command
+execute-all-tasks = groundwork-just-do-it command
+split-specifications = groundwork-split-spec command
+
+# Skills without command entry points (internal, auto-loaded by description match)
+implement-feature = groundwork-implement-feature
+test-driven-development = groundwork-test-driven-development
+use-git-worktree = groundwork-use-git-worktree
+understanding-feature-requests = groundwork-understanding-feature-requests
+task-validation-loop = groundwork-task-validation-loop
+
+# Excluded from non-Claude targets
+using-groundwork = drop
+help-with-groundwork = drop
+check-groundwork = drop
+skills-of-groundwork = drop
