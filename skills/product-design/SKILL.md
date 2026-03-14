@@ -21,9 +21,26 @@ Interactive workflow for iteratively designing and documenting product requireme
 
 If the user called the skill without any context, ask them to provide context on what feature they want to add, modify or remove.
 
+## Step 0.5: Load Project Context
+
+Before clarifying the request, load existing specs so you can detect contradictions and understand constraints:
+
+**Check for and read (if they exist):**
+- `specs/architecture.md` (or `specs/architecture/` directory) — technology choices, component boundaries, decision records. Use to catch architecturally infeasible requirements early.
+- `specs/design_system.md` — design principles, brand decisions, UX patterns. Use to ensure new features align with established design language.
+- `specs/product_specs.md` (or `specs/product_specs/` directory) — already loaded implicitly by the contradiction check, but read it explicitly here for full cross-feature context.
+
+For each, check single file first, then directory. If a directory, aggregate all `.md` files.
+
+If none exist, that's fine — proceed without them.
+
 ## Step 1: Understand the Request
 
 Invoke the `groundwork:understanding-feature-requests` skill to clarify the feature and check for contradictions.
+
+If architecture and design system were loaded in Step 0.5, provide them as context so the clarification can also check for:
+- **Architectural feasibility** — requirements that conflict with technology choices or component boundaries
+- **Design consistency** — features that would require patterns contradicting the established design system
 
 This skill will:
 1. Ask clarifying questions (core, exploratory, conditional)
@@ -200,6 +217,10 @@ After successfully updating the PRD, use the `AskUserQuestion` tool to present t
         "description": "Create user experience designs and flows for this feature"
       },
       {
+        "label": "Create tasks",
+        "description": "Generate implementation tasks for this feature"
+      },
+      {
         "label": "Add another feature",
         "description": "Continue adding more features to the PRD"
       }
@@ -213,6 +234,7 @@ After successfully updating the PRD, use the `AskUserQuestion` tool to present t
 
 - **Design architecture**: Invoke the `groundwork:architecture` skill to design the technical approach
 - **Design UX**: Invoke the `groundwork:ux-design` skill to create UX designs
+- **Create tasks**: Invoke the `groundwork:tasks` skill to generate implementation tasks for the new feature
 - **Add another feature**: Clear context by summarizing what was just added, then restart from Step 1 with a fresh feature request. Ask: "What feature would you like to add next?"
 
 ## Conversation Patterns

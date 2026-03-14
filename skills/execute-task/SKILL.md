@@ -74,7 +74,7 @@ Read the tasks file from the worktree:
 
 Search for `### TASK-NNN:` pattern.
 
-**Error:** Task not found → "TASK-NNN not found in specs/tasks.md"
+**Error:** Task not found → "TASK-NNN not found in specs/tasks/"
 
 ### Step 3: Validate Task is Workable
 
@@ -105,9 +105,11 @@ Search for `### TASK-NNN:` pattern.
 Read from the worktree:
 1. **Product specs** - `specs/product_specs.md` or `specs/product_specs/`
 2. **Architecture** - `specs/architecture.md` or `specs/architecture/`
-3. **Tasks** - `specs/tasks.md` or `specs/tasks/`
+3. **Design system** - `specs/design_system.md` (if exists)
+4. **Tasks** - `specs/tasks.md` or `specs/tasks/`
 
 **If specs missing:** Report which are missing and suggest commands to create them.
+**If design system missing:** Not an error — proceed without it. Note its absence for the planner.
 
 ### Step 5: Plan Implementation
 
@@ -129,10 +131,14 @@ Relevant product specs:
 Relevant architecture:
 [extracted decisions]
 
+Design system:
+[extracted design tokens, color palette, typography, component patterns, UX patterns — or 'No design system defined' if not found]
+
 REQUIREMENTS FOR THE PLAN:
 1. All work happens in worktree .worktrees/TASK-NNN (not main workspace)
 2. Must follow TDD: write test → implement → verify cycle
 3. Plan covers implementation only — validation and merge are handled separately by the caller
+4. If a design system is provided and the task involves UI, the plan must reference specific design tokens, colors, and component patterns from it
 ",
   description="Plan TASK-NNN"
 )
@@ -191,7 +197,7 @@ Present summary to the user:
 
 ### Step 7: Implementation (task-executor Agent)
 
-1. **Update status** - Change task to `**Status:** In Progress`
+1. **Update status** - Change task file to `**Status:** In Progress` and update the status table in `specs/tasks/_index.md` (change the task's row to `In Progress`)
 
 2. **Dispatch to the task-executor agent** with a fresh context window. This agent has `implement-feature`, `use-git-worktree`, and `test-driven-development` skills preloaded — it does not need to call `Skill()` or spawn subagents.
 
@@ -319,7 +325,7 @@ cd .worktrees/TASK-NNN
 
 After successful merge or user acknowledgment:
 
-1. **Update status** - Change task to `**Status:** Complete`
+1. **Update status** - Change task file to `**Status:** Complete` and update the status table in `specs/tasks/_index.md` (change the task's row to `Complete`)
 
 ### Step 9: Complete and Report
 

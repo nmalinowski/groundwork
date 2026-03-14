@@ -11,7 +11,7 @@ Autonomous verification loop that runs 3 specialized agents to validate task lis
 ## Prerequisites
 
 Before invoking this skill, ensure:
-- Task list is complete (specs/tasks.md exists)
+- Task list is complete (specs/tasks/ directory or specs/tasks.md exists)
 - PRD exists (specs/product_specs.md)
 - Architecture exists (specs/architecture.md)
 - User has approved the task breakdown
@@ -93,7 +93,7 @@ Present results in table format:
    ```
 
 2. **Fix Each Finding** - Apply each critical/major recommendation
-   - Modify specs/tasks.md with required changes
+   - Modify the relevant task file in specs/tasks/ (or specs/tasks.md if single-file)
    - Track what was changed
    - Note which finding each fix addresses
 

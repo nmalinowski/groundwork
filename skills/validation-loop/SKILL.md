@@ -109,6 +109,9 @@ Each returns JSON:
    ```
 
 2. **Fix Each Finding** - Apply each non-minor recommendation
+   - **Behavioral fixes** (new logic, async changes, control flow, debouncing): write or update a failing test first, then apply the fix, then verify green — follow TDD
+   - **Cosmetic fixes** (class names, constants, formatting): apply directly, verify tests still pass
+   - **How to tell:** if the fix requires new/changed test assertions, it's behavioral
    - Track what was changed
    - Note which finding each fix addresses
 

@@ -436,10 +436,105 @@ Never fix bugs without a test.
 
 ## Testing Anti-Patterns
 
-When adding mocks or test utilities, avoid these common pitfalls:
-- Testing mock behavior instead of real behavior
-- Adding test-only methods to production classes
-- Mocking without understanding dependencies
+Mocks are tools to isolate, not things to test. Before every mock, run these gates:
+
+### Don't test mock behavior
+
+```
+BEFORE asserting on any mock element:
+  Ask: "Am I testing real behavior or mock existence?"
+  IF mock existence → delete the assertion or unmock the component
+```
+
+```typescript
+// ❌ BAD: Testing that the mock exists
+test('renders sidebar', () => {
+  render(<Page />);
+  expect(screen.getByTestId('sidebar-mock')).toBeInTheDocument();
+});
+
+// ✅ GOOD: If sidebar must be mocked, assert on Page's behavior
+test('page passes user data to sidebar', () => {
+  render(<Page user={testUser} />);
+  expect(Sidebar).toHaveBeenCalledWith(
+    expect.objectContaining({ user: testUser }), expect.anything()
+  );
+});
+```
+
+### Don't add test-only methods to production classes
+
+```
+BEFORE adding any method to a production class:
+  Ask: "Is this only used by tests?"
+  IF yes → put it in test utilities instead
+```
+
+### Mock at the right level
+
+```
+BEFORE mocking any method:
+  1. "What side effects does the real method have?"
+  2. "Does this test depend on any of those side effects?"
+  IF yes → mock lower (the actual slow/external operation), not the method the test depends on
+```
+
+```typescript
+// ❌ BAD: Mock prevents config write that test depends on
+test('detects duplicate server', async () => {
+  vi.mock('ToolCatalog', () => ({
+    discoverAndCacheTools: vi.fn().mockResolvedValue(undefined)
+  }));
+  await addServer(config);
+  await addServer(config);  // Should throw - but won't!
+});
+
+// ✅ GOOD: Mock the slow part, preserve behavior test needs
+test('detects duplicate server', async () => {
+  vi.mock('MCPServerManager'); // Just mock slow server startup
+  await addServer(config);    // Config written
+  await addServer(config);    // Duplicate detected ✓
+});
+```
+
+### Preserve real semantics in mocks
+
+```
+BEFORE creating any mock:
+  Ask: "What type does the real implementation return?"
+  Value vs. stream? Sync vs. async? Array vs. cursor?
+  IF mock changes the abstraction type → fix it
+```
+
+```typescript
+// ❌ BAD: Mock returns array, real implementation returns async cursor
+const mockDb = {
+  getUsers: vi.fn().mockResolvedValue([
+    { id: '1', name: 'Alice' },
+    { id: '2', name: 'Bob' },
+  ])
+};
+// Test passes, but production breaks on 1000+ users when
+// pagination and backpressure actually matter.
+
+// ✅ GOOD: Mock preserves real cursor semantics
+const mockDb = {
+  getUsers: vi.fn().mockReturnValue({
+    async *[Symbol.asyncIterator]() {
+      yield { id: '1', name: 'Alice' };
+      yield { id: '2', name: 'Bob' };
+    }
+  })
+};
+```
+
+### Red flags
+
+- Assertion checks for `*-mock` test IDs
+- Methods only called in test files
+- Mock setup is >50% of test code
+- `mockResolvedValue()` when real code returns a stream
+- Mocking "just to be safe"
 
 ## Final Rule
 

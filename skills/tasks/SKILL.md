@@ -15,7 +15,19 @@ Translates product specs and architecture into actionable implementation tasks.
   - `specs/product_specs.md` (PRD with EARS requirements)
   - `specs/architecture.md` (architecture with decision records)
   - `specs/design_system.md` (design system with DP/BRD/UXD decisions) - optional
-- **Output:** `specs/tasks.md` (task list with dependencies)
+- **Output:** `specs/tasks/` directory with per-milestone subdirectories:
+  ```
+  specs/tasks/
+  ├── _index.md          # Overview, milestone summary, dependency graph
+  ├── M1-core-auth/
+  │   ├── TASK-001.md
+  │   ├── TASK-002.md
+  │   └── TASK-003.md
+  ├── M2-upload/
+  │   ├── TASK-004.md
+  │   └── TASK-005.md
+  └── parking-lot.md     # Deferred tasks
+  ```
 
 ## Workflow Overview
 
@@ -55,9 +67,27 @@ If PRD or architecture is missing, prompt user:
 
 If design system exists, incorporate design context into UI/frontend tasks.
 
-## Step 2: Define Milestones
+## Step 2: Check Existing Tasks and Milestones
 
-Before generating tasks, establish **product milestones** - points where the application can be assessed by a user.
+Before defining milestones, check if tasks already exist:
+
+1. Check for `specs/tasks/_index.md` or `specs/tasks.md`
+2. If found, read to understand existing milestones, task numbering, and status
+
+**If existing tasks found:**
+- List existing milestones and their status (complete, in progress, not started)
+- Determine the highest task number (e.g., TASK-047) so new tasks continue the sequence
+- Determine the highest milestone number (e.g., M5) so new milestones continue the sequence
+- Present to user: "Found existing milestones M1-M5 with 47 tasks. New tasks will be added as TASK-048+."
+- Ask: "Should this new work be added to an existing milestone, or should I create a new milestone M6?"
+
+**If no existing tasks:** Proceed to define milestones from scratch.
+
+## Step 2b: Define Milestones
+
+**If adding to existing project:** Either add tasks to a user-selected existing milestone directory, or create a new milestone directory continuing the sequence (e.g., `M6-feature-name/`).
+
+**If starting fresh:** Establish **product milestones** - points where the application can be assessed by a user.
 
 Milestone principles:
 - **Vertically sliced** - Each milestone delivers user-visible value
@@ -69,16 +99,16 @@ Example milestone progression:
 ```
 M1: Core Authentication
     → User can sign up, log in, see empty dashboard
-    
-M2: Upload & Verification  
+
+M2: Upload & Verification
     → User can upload images, complete identity verification
-    
+
 M3: Model Training
     → User can initiate training, see progress, view completion
-    
+
 M4: Basic Generation
     → User can generate images with their model
-    
+
 M5: Billing Integration
     → User can subscribe, see quota, pay for overages
 ```
@@ -274,7 +304,29 @@ Present the complete task list organized by milestone. Ask:
 > - Do the dependencies look right?
 > - Should any tasks be split or combined?"
 
-Iterate until user approves, then write to `specs/tasks.md`.
+Iterate until user approves, then write task files to `specs/tasks/`.
+
+**Output structure:**
+1. Create or update `specs/tasks/_index.md` with overview, milestone summary table, dependency graph, **task status table**, and critical path
+2. For each new milestone, create a directory: `specs/tasks/M{N}-{slug}/` (e.g., `M1-core-auth/`)
+3. Write one file per task: `specs/tasks/M{N}-{slug}/TASK-{NNN}.md`
+4. Each task file is self-contained — includes all fields from the Required Task Format
+5. Write or update `specs/tasks/parking-lot.md` for deferred tasks (if any)
+
+**Task status table in `_index.md`** (required — used by `next-task` to find work without reading every task file):
+```markdown
+### Task Status
+
+| # | Task | Milestone | Status | Blocked by |
+|---|------|-----------|--------|------------|
+| TASK-001 | Auth setup | M1 | Not Started | None |
+| TASK-002 | Login UI | M1 | Not Started | TASK-001 |
+```
+
+**If adding to existing tasks:**
+- Update `_index.md` — add new rows to the status table, add the new milestone to the summary table, extend the dependency graph
+- Continue task numbering from the highest existing task number
+- Do NOT regenerate or modify existing milestone directories or task files
 
 **Progressive presentation:**
 - Present tasks one milestone at a time

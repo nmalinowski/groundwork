@@ -7,26 +7,34 @@ user-invocable: false
 
 # Next Task Skill
 
-Finds the next uncompleted task from `specs/tasks.md` and delegates execution to the `execute-task` skill.
+Finds the next uncompleted task from `specs/tasks/` (or `specs/tasks.md`) and delegates execution to the `execute-task` skill.
 
 ## Workflow
 
 **IMPORTANT**: Your job is NOT to build a plan or build anything, it is to exclusively to find the next task to execute. Don't do planning or building until the full workflow is executed. If you find yourself planning or executing, STOP and follow the workflow.
 
-### Step 1: Load Tasks
+### Step 1: Load Task Index
 
-Read the tasks file to find available tasks:
-- Single file: `specs/tasks.md`
-- Directory: `specs/tasks/` (aggregated in sorted order)
+Read **only** the task index to find available tasks — do NOT read individual task files:
+- Directory mode: `specs/tasks/_index.md` (preferred — contains status table)
+- Single file fallback: `specs/tasks.md`
 
-**Detection:** Check for file first (takes precedence), then directory. When reading a directory, aggregate all `.md` files recursively with `_index.md` first, then numerically-prefixed files, then alphabetically.
+**Detection:** Check for `specs/tasks/_index.md` first, then `specs/tasks.md`. Do NOT aggregate all task files — the index contains the status table with all the information needed to find the next task.
 
 ### Step 2: Find Next Task
 
-Parse the tasks to find the next task to work on:
+Parse the status table in `_index.md` to find the next task:
 
-1. Look for all tasks with `**Status:** Not Started`
-2. Check dependencies - filter to unblocked tasks (no incomplete dependencies)
+```markdown
+| # | Task | Milestone | Status | Blocked by |
+|---|------|-----------|--------|------------|
+| TASK-001 | Auth setup | M1 | Complete | None |
+| TASK-002 | Login UI | M1 | In Progress | TASK-001 |
+| TASK-003 | Dashboard | M2 | Not Started | TASK-002 |
+```
+
+1. Look for all rows with Status = `Not Started`
+2. Check dependencies — filter to unblocked tasks (all tasks in `Blocked by` column are `Complete`)
 3. **Detect ambiguity:**
    - Let `candidates` = unblocked not-started tasks
    - Let `next_sequential` = lowest numbered candidate (e.g., TASK-004)
@@ -45,7 +53,9 @@ Parse the tasks to find the next task to work on:
 
 5. **If unambiguous:** Select the first unblocked, not-started task
 
-**Dependency check:** A task is blocked if its `Blocked by:` field lists any task that is not `Complete`.
+**Dependency check:** A task is blocked if its `Blocked by` column lists any task that is not `Complete` in the status table.
+
+**Fallback:** If `_index.md` has no status table, read individual task files to find statuses (legacy single-file format).
 
 **Tip:** For direct task selection, use `/groundwork:work-on N` to work on a specific task by number.
 
@@ -55,7 +65,7 @@ Parse the tasks to find the next task to work on:
 |-----------|----------|
 | No `specs/` directory | "No specs directory found. Run `/groundwork:design-product` to start defining your project." |
 | Missing tasks file | "Tasks file not found. Run `/groundwork:create-tasks` to generate tasks from your PRD and architecture." |
-| No tasks in file | "No tasks found in specs/tasks.md. The file may need to be regenerated with `/groundwork:create-tasks`." |
+| No tasks found | "No tasks found in specs/tasks/. The directory may need to be regenerated with `/groundwork:create-tasks`." |
 | All tasks complete | "All tasks complete! Consider running `/groundwork:source-product-specs-from-code` to update documentation or plan the next phase." |
 | Only blocked tasks | "All remaining tasks are blocked. Blocked tasks: [list]. Would you like to override and work on one anyway?" |
 | Parse error | "Could not parse tasks.md. Expected format: `### TASK-NNN: Title` with `**Status:**` field." |
