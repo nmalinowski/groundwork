@@ -11,7 +11,7 @@ Autonomous verification loop that runs 3 specialized agents to validate task lis
 ## Prerequisites
 
 Before invoking this skill, ensure:
-- Task list is complete (specs/tasks.md exists)
+- Task list is complete (specs/tasks/ directory or specs/tasks.md exists)
 - PRD exists (specs/product_specs.md)
 - Architecture exists (specs/architecture.md)
 - User has approved the task breakdown
@@ -30,6 +30,16 @@ design_system ← Read specs/design_system.md (if exists, optional)
 ```
 
 **Detection:** Check for file first (takes precedence), then directory. When reading a directory, aggregate all `.md` files recursively.
+
+### 1.5. Determine Active Agents
+
+| Agent | Skip when |
+|---|---|
+| `design-task-alignment-checker` | No `design_system` found AND no UI/frontend tasks in task list |
+
+`prd-task-alignment-checker` and `architecture-task-alignment-checker` always run (their inputs are prerequisites).
+
+Record skipped agents with verdict `skipped`.
 
 ### 2. Launch Validation Agents
 
@@ -83,7 +93,7 @@ Present results in table format:
    ```
 
 2. **Fix Each Finding** - Apply each critical/major recommendation
-   - Modify specs/tasks.md with required changes
+   - Modify the relevant task file in specs/tasks/ (or specs/tasks.md if single-file)
    - Track what was changed
    - Note which finding each fix addresses
 
@@ -93,7 +103,12 @@ Present results in table format:
    - **accessibility-missing**: Add acceptance criteria to task
    - **over-tasked**: Remove task or add requirement to PRD (user decision)
 
-3. **Re-run Agent Validation** - Launch all 3 agents again with updated task list
+3. **Re-run Agent Validation** — Re-launch ONLY agents that returned `request-changes`. Agents that approved retain their verdict unless the fix changed content in their domain:
+   - **PRD alignment checker**: re-run if tasks were added/removed or requirements mapping changed
+   - **Architecture alignment checker**: re-run if component assignments or technology references changed
+   - **Design alignment checker**: re-run if accessibility criteria or design token references changed
+
+   For agents NOT re-run, carry forward their previous `approve` verdict and score.
 
 4. **Check Results**
    - ALL approve → **PASS**, return success

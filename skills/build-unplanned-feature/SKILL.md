@@ -19,11 +19,29 @@ Extract the feature description from:
 
 Store the raw description for clarification.
 
-### Step 2: Clarify Requirements
+### Step 2: Load Existing Specs
+
+Before clarifying requirements, check for existing project specs so the clarification can detect contradictions and the implementation can follow established patterns.
+
+**Check for and read (if they exist):**
+- `specs/product_specs.md` (or `specs/product_specs/` directory) → `PRD_CONTEXT`
+- `specs/architecture.md` (or `specs/architecture/` directory) → `ARCHITECTURE_CONTEXT`
+- `specs/design_system.md` → `DESIGN_CONTEXT`
+
+For each, check single file first, then directory. If a directory, aggregate all `.md` files.
+
+If none exist, that's fine — proceed without them.
+
+### Step 3: Clarify Requirements
 
 **You MUST call the Skill tool now:** `Skill(skill="groundwork:understanding-feature-requests")`
 
 Do NOT attempt to gather requirements yourself. The skill handles this.
+
+If existing specs were loaded in Step 2, provide them as context to the clarification skill so it can:
+- Detect contradictions with existing PRD requirements
+- Identify overlap with existing features
+- Understand architectural constraints
 
 Follow the skill to gather:
 - Problem being solved
@@ -33,7 +51,7 @@ Follow the skill to gather:
 
 Continue until requirements are clear and internally consistent.
 
-### Step 3: Generate Feature Identifier
+### Step 4: Generate Feature Identifier
 
 Create a feature identifier from the clarified requirements:
 
@@ -49,7 +67,7 @@ Create a feature identifier from the clarified requirements:
 - "Export reports to PDF" → `FEATURE-pdf-export`
 - "Rate limiting for API" → `FEATURE-api-rate-limit`
 
-### Step 4: Present Feature Summary
+### Step 5: Present Feature Summary
 
 Present summary to the user:
 
@@ -84,11 +102,11 @@ Then use `AskUserQuestion` to ask:
 
 **Wait for user response before proceeding.**
 
-### Step 5: Implementation (task-executor Agent)
+### Step 6: Implementation (task-executor Agent)
 
 Implementation is dispatched to the **task-executor agent** with a fresh context window. This agent has `implement-feature`, `use-git-worktree`, and `test-driven-development` skills preloaded — it does not need to call `Skill()` or spawn subagents.
 
-**Build the Task prompt with ALL gathered context from Steps 1-4.** You MUST include actual values, not placeholders:
+**Build the Task prompt with ALL gathered context from Steps 1-5 (specs from Step 2, requirements from Step 3, feature definition from Steps 4-5).** You MUST include actual values, not placeholders:
 
     Task(
       subagent_type="groundwork:task-executor:task-executor",
@@ -98,22 +116,35 @@ Implementation is dispatched to the **task-executor agent** with a fresh context
     PROJECT ROOT: [absolute path to project root]
 
     FEATURE DEFINITION:
-    - Identifier: [FEATURE-slug from Step 3]
-    - Title: [1-2 sentence summary from Step 4]
+    - Identifier: [FEATURE-slug from Step 4]
+    - Title: [1-2 sentence summary from Step 5]
 
     ACTION ITEMS:
-    [Bulleted list of requirements gathered in Steps 1-2]
+    [Bulleted list of requirements gathered in Steps 1-3]
 
     ACCEPTANCE CRITERIA:
-    [Bulleted list of acceptance criteria from Step 2/4]
+    [Bulleted list of acceptance criteria from Step 3/5]
 
     OUT OF SCOPE:
     [Bulleted list of exclusions, or 'None specified']
 
+    PROJECT CONTEXT (follow these established patterns):
+    [Include each section below ONLY if the spec was found in Step 2. Omit sections where no spec exists.]
+
+    ARCHITECTURE:
+    [Contents of ARCHITECTURE_CONTEXT — pay attention to technology choices, component boundaries, and decision records. Your implementation must follow these.]
+
+    DESIGN SYSTEM:
+    [Contents of DESIGN_CONTEXT — use these design tokens, patterns, and component styles. Do not invent new patterns that contradict the established system.]
+
+    EXISTING PRD (for reference only):
+    [Contents of PRD_CONTEXT — be aware of existing features to avoid duplication or contradiction. Do not re-implement existing functionality.]
+
     INSTRUCTIONS:
     1. Follow your preloaded skills to create a worktree, implement with TDD, and commit.
     2. The feature definition above provides all session context — do NOT re-ask the user for requirements.
-    3. When complete, output your final line in EXACTLY this format:
+    3. If project context is provided, follow the established architecture and design patterns.
+    4. When complete, output your final line in EXACTLY this format:
        RESULT: IMPLEMENTED | <worktree_path> | <branch> | <base_branch>
        OR:
        RESULT: FAILURE | [one-line reason]
@@ -130,11 +161,11 @@ Implementation is dispatched to the **task-executor agent** with a fresh context
 - `RESULT: FAILURE | ...` — Report the failure and worktree location for investigation, stop
 - No parseable RESULT line — Report: "Implementation subagent did not return a structured result. Check worktree status manually." Stop.
 
-### Step 6: Validation (Direct Skill Call)
+### Step 7: Validation (Direct Skill Call)
 
 **Call the validation-loop skill directly.** Do NOT wrap this in a subagent — this skill runs in the main conversation, which CAN spawn the 8 validation subagents it needs.
 
-1. `cd` into the worktree path from Step 5
+1. `cd` into the worktree path from Step 6
 2. Call: `Skill(skill='groundwork:validation-loop')`
 3. The validation-loop skill will run 8 verification agents in parallel and fix issues autonomously.
 
@@ -143,7 +174,7 @@ Implementation is dispatched to the **task-executor agent** with a fresh context
 - Validation failed → Report the failure and worktree location for investigation, stop
 - Stuck on recurring issue → Report the stuck finding and stop
 
-### Step 7: Merge Decision
+### Step 8: Merge Decision
 
 **From the project root** (NOT the worktree), handle merge:
 
@@ -191,7 +222,7 @@ cd .worktrees/<identifier>
 ```
 ```
 
-### Step 8: Report Completion
+### Step 9: Report Completion
 
 Output implementation summary:
 

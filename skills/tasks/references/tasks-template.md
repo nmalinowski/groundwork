@@ -1,11 +1,28 @@
-# Tasks Document Template
+# Tasks Directory Template
 
-Use this template when creating `specs/tasks.md`.
+Use this structure when creating task files in `specs/tasks/`.
+
+## Directory Structure
+
+```
+specs/tasks/
+├── _index.md
+├── M1-{slug}/
+│   ├── TASK-001.md
+│   ├── TASK-002.md
+│   └── TASK-003.md
+├── M2-{slug}/
+│   ├── TASK-004.md
+│   └── TASK-005.md
+└── parking-lot.md
+```
+
+## `_index.md` Template
 
 ```markdown
 # Implementation Tasks
 
-**Generated from:** 
+**Generated from:**
 - PRD: `specs/product_specs.md`
 - Architecture: `specs/architecture.md`
 
@@ -22,15 +39,15 @@ Use this template when creating `specs/tasks.md`.
 
 ### Milestone Summary
 
-| Milestone | Description | Tasks | Status |
-|-----------|-------------|-------|--------|
-| M1 | [Name] | [N] | Not Started |
-| M2 | [Name] | [N] | Not Started |
-| M3 | [Name] | [N] | Not Started |
+| Milestone | Directory | Tasks | Status |
+|-----------|-----------|-------|--------|
+| M1 | `M1-[slug]/` | [N] | Not Started |
+| M2 | `M2-[slug]/` | [N] | Not Started |
+| M3 | `M3-[slug]/` | [N] | Not Started |
 
 ### Dependency Graph
 
-```
+` ``
 M1: [Name]
 ├── TASK-001 ──┐
 ├── TASK-002 ──┼── TASK-003
@@ -39,29 +56,36 @@ M1: [Name]
 M2: [Name] (depends: M1)
 ├── TASK-005 ──┐
 └── TASK-006 ──┴── TASK-007
-```
+` ``
+
+### Task Status
+
+| # | Task | Milestone | Status | Blocked by |
+|---|------|-----------|--------|------------|
+| TASK-001 | [Title] | M1 | Not Started | None |
+| TASK-002 | [Title] | M1 | Not Started | TASK-001 |
+| TASK-003 | [Title] | M1 | Not Started | TASK-001 |
+| TASK-004 | [Title] | M2 | Not Started | TASK-002, TASK-003 |
+| TASK-005 | [Title] | M2 | Not Started | TASK-004 |
 
 ### Critical Path
 
 TASK-001 → TASK-002 → TASK-003 → TASK-006 → TASK-007
 
 **Estimated critical path duration:** [X days/weeks]
+```
 
----
+## Individual Task File Template (`TASK-NNN.md`)
 
-## Milestone 1: [Name]
+```markdown
+### TASK-NNN: [Task Title]
 
-**Goal:** [User-visible outcome]
-**Exit Criteria:** [How we know it's done]
-**Target Date:** [If known]
-
-### TASK-001: [Title]
-
-**Component:** [From architecture]
+**Milestone:** M[X] - [Milestone Name]
+**Component:** [Component from architecture]
 **Estimate:** S | M | L | XL
 
-**Goal:** 
-[One sentence outcome]
+**Goal:**
+[One sentence describing the outcome]
 
 **Action Items:**
 - [ ] [Action 1]
@@ -69,53 +93,27 @@ TASK-001 → TASK-002 → TASK-003 → TASK-006 → TASK-007
 - [ ] [Action 3]
 
 **Dependencies:**
-- Blocked by: None
-- Blocks: TASK-002, TASK-003
+- Blocked by: [TASK-XXX, TASK-YYY or None]
+- Blocks: [TASK-ZZZ or None]
 
 **Acceptance Criteria:**
-- [Criterion 1]
-- [Criterion 2]
+- [Testable criterion 1]
+- [Testable criterion 2]
 
 **Related Requirements:** PRD-XXX-REQ-NNN
-**Related Decisions:** DR-NNN
+**Related Decisions:** DR-NNN, DP-NNN, BRD-NNN, UXD-NNN
 
 **Status:** Not Started | In Progress | Complete | Blocked
+```
 
----
+## `parking-lot.md` Template
 
-### TASK-002: [Title]
-
-[Same structure...]
-
----
-
-## Milestone 2: [Name]
-
-[Same structure...]
-
----
-
-## Parking Lot
+```markdown
+# Parking Lot
 
 Tasks identified but not yet scheduled:
 
 | ID | Description | Reason Deferred |
 |----|-------------|-----------------|
 | TASK-XXX | [description] | [why deferred] |
-
----
-
-## Glossary
-
-| Term | Definition |
-|------|------------|
-| [Term] | [Definition] |
-
----
-
-## Change Log
-
-| Date | Change | Author |
-|------|--------|--------|
-| [date] | Initial task breakdown | [name] |
 ```
